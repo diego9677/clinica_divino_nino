@@ -25,6 +25,10 @@
                         {{ form.fecha_reserva|add_clss:"form-control" }}
                     </div>
                     <div class="mb-3">
+                        <label for="id_marca" class="form-label">{{ form.hora_reserva.label }}</label>
+                        {{ form.hora_reserva|add_clss:"form-control" }}
+                    </div>
+                    <div class="mb-3">
                         {{ form.activo|add_clss:"form-check-input" }}
                         <label for="id_activo" class="form-label">{{ form.activo.label }}</label>
                     </div>

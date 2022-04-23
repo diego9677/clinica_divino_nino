@@ -21,6 +21,7 @@ class Consulta(models.Model):
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
     descripcion = models.TextField(verbose_name='Descripción')
     fecha_atencion = models.DateTimeField(verbose_name='Fecha Atención')
+    hora_atencion = models.TimeField(verbose_name='Hora Atención')
 
 
 class Factura(models.Model):
