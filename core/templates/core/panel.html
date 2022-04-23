@@ -1,0 +1,21 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Panel{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'core/css/index.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div>
+        {% comment %} sidebar {% endcomment %}
+        <main>
+            {% include 'core/includes/sidebar.html' %}
+
+            <div class="container">
+                {% block content-panel %}{% endblock %}
+            </div>
+        </main>
+    </div>
+{% endblock %}

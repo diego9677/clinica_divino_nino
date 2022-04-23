@@ -1,0 +1,36 @@
+main {
+    display: flex;
+    flex-wrap: nowrap;
+    height: 100vh;
+    max-height: 100vh;
+    overflow-x: auto;
+    overflow-y: auto;
+}
+
+.table > :not(:first-child) {
+    border-top: 0;
+}
+
+.table-section {
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+}
+
+.table-section-modal {
+    max-height: calc(100vh - 150px);
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+}
+
+.table-fixed {
+    text-align: left;
+    position: relative;
+}
+
+.table-fixed th {
+    background: white;
+    position: sticky;
+    top: 0; /* Don't forget this, required for the stickiness */
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+}

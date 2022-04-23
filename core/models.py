@@ -31,7 +31,7 @@ class Persona(models.Model):
 class Usuario(AbstractUser):
     USERNAME_FIELD = 'username'
 
-    persona = models.OneToOneField(Persona, unique=True, related_name='usuario', on_delete=models.CASCADE)
+    persona = models.OneToOneField(Persona, unique=True, related_name='usuario', null=True, on_delete=models.CASCADE)
 
 
 class Doctor(models.Model):
@@ -64,7 +64,8 @@ class Paciente(models.Model):
 class Reserva(models.Model):
     paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE)
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
-    fecha_reserva = models.DateTimeField(verbose_name='Fecha Reserva')
+    fecha_reserva = models.DateField(verbose_name='Fecha Reserva')
+    hora_reserva = models.TimeField(verbose_name='Hora Reserva')
     activo = models.BooleanField(default=True, verbose_name='Activo')
 
     def __str__(self):

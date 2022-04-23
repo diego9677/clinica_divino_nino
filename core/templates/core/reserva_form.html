@@ -1,0 +1,43 @@
+{% extends 'core/panel.html' %}
+{% load formclss %}
+
+{% block title %}{% if object %}Editar{% else %}Nueva{% endif %}  reserva{% endblock %}
+
+{% block content-panel %}
+    <div class="row py-2 px-4">
+        <div class="card col-5 mx-auto">
+            <div class="card-body">
+                <div class="card-title">
+                    <h3>{% if object %}Editar{% else %}Nueva{% endif %} Reserva</h3>
+                </div>
+                <form action="." method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="id_codigo" class="form-label">{{ form.paciente.label }}</label>
+                        {{ form.paciente|add_clss:"form-control" }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_marca" class="form-label">{{ form.doctor.label }}</label>
+                        {{ form.doctor|add_clss:"form-control" }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_marca" class="form-label">{{ form.fecha_reserva.label }}</label>
+                        {{ form.fecha_reserva|add_clss:"form-control" }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.activo|add_clss:"form-check-input" }}
+                        <label for="id_activo" class="form-label">{{ form.activo.label }}</label>
+                    </div>
+                    <div class="d-flex flex-row gap-2">
+                        {% if object %}
+                            <a href="#"
+                               class="btn flex-fill btn-danger">Eliminar</a>
+                        {% endif %}
+                        <a href="{% url 'reserva-list' %}" class="btn flex-fill btn-secondary">Cancelar</a>
+                        <button type="submit" class="btn flex-fill btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
