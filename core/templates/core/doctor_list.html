@@ -1,0 +1,55 @@
+{% extends 'core/panel.html' %}
+
+{% block title %}Doctores{% endblock %}
+
+{% block content-panel %}
+    <div class="py-4">
+        <div class="d-flex flex-row justify-content-between mb-4">
+            <a href="{% url 'doctor-create' %}" class="btn btn-primary">
+                Nuevo
+            </a>
+            <form class="d-flex flex-row gap-2" action="." method="GET">
+                <input type="text" name="word" class="form-control flex-fill" value="{{ request.GET.word }}"
+                       placeholder="Buscar reservas"/>
+                <button class="btn btn-success" type="submit">Buscar</button>
+            </form>
+        </div>
+        <div class="table-section">
+            <table class="table table-bordered table-sm table-fixed">
+                <thead>
+                <tr class="text-center border-bottom">
+                    <th scope="col">#</th>
+                    <th scope="col">CI</th>
+                    <th scope="col">Nombre Completo</th>
+                    <th scope="col">Codigo Interno</th>
+                    <th scope="col">Especialidad</th>
+                    <th scope="col">Fecha Nac.</th>
+                    <th scope="col">Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% if object_list %}
+                    {% for doctor in object_list %}
+                        <tr class="text-center">
+                            <td>{{ doctor.id }}</td>
+                            <td>{{ doctor.persona.ci }}</td>
+                            <td>{{ doctor.persona.nombres }} {{ doctor.persona.apellidos }}</td>
+                            <td>{{ doctor.cod_interno }}</td>
+                            <td>{{ doctor.especialidad }}</td>
+                            <td>{{ doctor.persona.fecha_nacimiento|date:"d/m/Y" }}</td>
+                            <td>
+                                <a href="{% url 'doctor-update' doctor.pk %}" class="btn btn-success btn-sm">Editar</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr class="text-center">
+                        <td colspan="7">Sin datos disponibles
+                        </td>
+                    </tr>
+                {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

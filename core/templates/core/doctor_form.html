@@ -1,0 +1,66 @@
+{% extends 'core/panel.html' %}
+{% load widget_tweaks %}
+
+{% block title %}{% if object %}Editar{% else %}Nuevo{% endif %} Doctor{% endblock %}
+
+{% block content-panel %}
+    <div class="row py-2 px-4">
+        <div class="card col-5 mx-auto">
+            <div class="card-body">
+                <div class="card-title">
+                    <h3>{% if object %}Editar{% else %}Nueva{% endif %} Doctor</h3>
+                </div>
+                <form action="." method="POST">
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label for="id_codigo" class="form-label">{{ field.label }}</label>
+                            {% if field.errors %}
+                                {{ field|add_class:"form-control is-invalid" }}
+                                {% for error in field.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            {% else %}
+                                {{ field|add_class:"form-control" }}
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    {#                    <div class="mb-3">#}
+                    {#                        <label for="id_codigo" class="form-label">{{ form.ci.label }}</label>#}
+                    {#                        {{ form.ci|add_clss:"form-control" }}#}
+                    {#                    </div>#}
+                    {#                    <div class="mb-3">#}
+                    {#                        <label for="id_marca" class="form-label">{{ form.nombres.label }}</label>#}
+                    {#                        {{ form.nombres|add_clss:"form-control" }}#}
+                    {#                    </div>#}
+                    {#                    <div class="mb-3">#}
+                    {#                        <label for="id_marca" class="form-label">{{ form.apellidos.label }}</label>#}
+                    {#                        {{ form.apellidos|add_clss:"form-control" }}#}
+                    {#                    </div>#}
+                    {#                    <div class="mb-3">#}
+                    {#                        <label for="id_marca" class="form-label">{{ form.fecha_nacimiento.label }}</label>#}
+                    {#                        {{ form.fecha_nacimiento|add_clss:"form-control" }}#}
+                    {#                    </div>#}
+                    {#                    <div class="mb-3">#}
+                    {#                        <label for="id_marca" class="form-label">{{ form.especialidad.label }}</label>#}
+                    {#                        {{ form.especialidad|add_clss:"form-control" }}#}
+                    {#                    </div>#}
+                    {#                    <div class="mb-3">#}
+                    {#                        <label for="id_activo" class="form-label">{{ form.cod_interno.label }}</label>#}
+                    {#                        {{ form.cod_interno|add_clss:"form-control" }}#}
+                    {#                    </div>#}
+                    <div class="d-flex flex-row gap-2">
+                        {% if object %}
+                            <a href="{% url 'doctor-delete' object.pk %}"
+                               class="btn flex-fill btn-danger">Eliminar</a>
+                        {% endif %}
+                        <a href="{% url 'doctor-list' %}" class="btn flex-fill btn-secondary">Cancelar</a>
+                        <button type="submit" class="btn flex-fill btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -8,16 +8,16 @@
       <a href="#" class="nav-link active" aria-current="page">Home</a>
     </li> {% endcomment %}
     <li class="nav-item">
-      <a href="{% url 'reserva-list' %}" class="nav-link text-white {% if request.path == '/reservas/' %}active{% endif %}">Reservas</a>
+      <a href="{% url 'reserva-list' %}" class="nav-link text-white {% if 'reservas' in request.path %}active{% endif %}">Reservas</a>
     </li>
     <li class="nav-item">
-      <a href="#" class="nav-link text-white {% if request.path == '/productos/' %}active{% endif %}">Productos</a>
+      <a href="{% url 'doctor-list' %}" class="nav-link text-white {% if 'doctores' in request.path %}active{% endif %}">Doctores</a>
     </li>
     <li class="nav-item">
-      <a href="#" class="nav-link text-white {% if request.path == '/compras/' %}active{% endif %}">Compras</a>
+      <a href="#" class="nav-link text-white {% if 'compras' in request.path %}active{% endif %}">Compras</a>
     </li>
     <li class="nav-item">
-      <a href="#" class="nav-link text-white {% if request.path == '/compras/proveedores/' %}active{% endif %}">Proveedores</a>
+      <a href="#" class="nav-link text-white {% if 'proveedores' in request.path %}active{% endif %}">Proveedores</a>
     </li>
   </ul>
   <hr>

@@ -3,52 +3,51 @@
 {% block title %}Reservas{% endblock %}
 
 {% block content-panel %}
-    <div class="py-4">
-        <div class="d-flex flex-row justify-content-between mb-4">
-            <a href="{% url 'reserva-create' %}" class="btn btn-primary">
-                Nuevo
-            </a>
-            <form class="d-flex flex-row gap-2" action="." method="GET">
-                <input type="text" name="word" class="form-control flex-fill" value="{{ request.GET.word }}"
-                       placeholder="Buscar reservas"/>
-                <button class="btn btn-success" type="submit">Buscar</button>
-            </form>
-        </div>
-        <div class="table-section">
-            <table class="table table-bordered table-sm table-fixed">
-                <thead>
+<div class="py-4">
+    <div class="d-flex flex-row justify-content-between mb-4">
+        <a href="{% url 'reserva-create' %}" class="btn btn-primary">
+            Nuevo
+        </a>
+        <form class="d-flex flex-row gap-2" action="." method="GET">
+            <input type="text" name="word" class="form-control flex-fill" value="{{ request.GET.word }}"
+                placeholder="Buscar reservas" />
+            <button class="btn btn-success" type="submit">Buscar</button>
+        </form>
+    </div>
+    <div class="table-section">
+        <table class="table table-bordered table-sm table-fixed">
+            <thead>
                 <tr class="text-center border-bottom">
                     <th scope="col">#</th>
                     <th scope="col">Paciente</th>
                     <th scope="col">Doctor</th>
                     <th scope="col">Fecha Reserva</th>
                     <th scope="col">Activo</th>
-                    <th scope="col"></th>
+                    <th scope="col">Acciones</th>
                 </tr>
-                </thead>
-                <tbody>
+            </thead>
+            <tbody>
                 {% if object_list %}
-                    {% for reserva in object_list %}
-                        <tr class="text-center">
-                            <td>{{ reserva.id }}</td>
-                            <td>{{ reserva.paciente.persona.nombres }} {{ reserva.paciente.persona.apellidos }}</td>
-                            <td>{{ reserva.doctor.persona.nombres }} {{ reserva.doctor.persona.apellidos }}</td>
-                            <td>{{ reserva.fecha_reserva }}</td>
-                            <td>{{ reserva.activo }}</td>
-                            <td>
-                                <a href="#"
-                                   class="btn btn-success btn-sm">Editar</a>
-                            </td>
-                        </tr>
-                    {% endfor %}
+                {% for reserva in object_list %}
+                <tr class="text-center">
+                    <td>{{ reserva.id }}</td>
+                    <td>{{ reserva.paciente.persona.nombres }} {{ reserva.paciente.persona.apellidos }}</td>
+                    <td>{{ reserva.doctor.persona.nombres }} {{ reserva.doctor.persona.apellidos }}</td>
+                    <td>{{ reserva.fecha_reserva }}</td>
+                    <td>{{ reserva.activo }}</td>
+                    <td>
+                        <a href="#" class="btn btn-success btn-sm">Editar</a>
+                    </td>
+                </tr>
+                {% endfor %}
                 {% else %}
-                    <tr class="text-center">
-                        <td colspan="7">Sin datos disponibles
-                        </td>
-                    </tr>
+                <tr class="text-center">
+                    <td colspan="7">Sin datos disponibles
+                    </td>
+                </tr>
                 {% endif %}
-                </tbody>
-            </table>
-        </div>
+            </tbody>
+        </table>
     </div>
+</div>
 {% endblock %}
