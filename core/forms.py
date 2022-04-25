@@ -1,5 +1,5 @@
 from django import forms
-from django.db.utils import IntegrityError
+from django.db.models import  Q
 from .models import Persona, Reserva, Doctor, Especialidad
 
 
@@ -37,6 +37,6 @@ class DoctorForm(forms.ModelForm):
 
     def clean_ci(self):
         ci = self.cleaned_data.get('ci')
-        if Persona.objects.filter(ci=ci).exists():
+        if Persona.objects.filter(Q(ci=ci) & ~Q(pk=self.instance.pk)).exists():
             raise forms.ValidationError('El ci ya se encuentra registrado')
         return ci

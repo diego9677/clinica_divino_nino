@@ -1,14 +1,14 @@
 {% extends 'core/panel.html' %}
 {% load widget_tweaks %}
 
-{% block title %}{% if object %}Editar{% else %}Nuevo{% endif %} Doctor{% endblock %}
+{% block title %}{% if object %}Editar{% else %}Nuevo{% endif %} consultorio{% endblock %}
 
 {% block content-panel %}
     <div class="row py-2 px-4">
         <div class="card col-5 mx-auto">
             <div class="card-body">
                 <div class="card-title">
-                    <h3>{% if object %}Editar{% else %}Nueva{% endif %} Doctor</h3>
+                    <h3>{% if object %}Editar{% else %}Nuevo{% endif %} Consultorio</h3>
                 </div>
                 <form action="." method="POST">
                     {% csrf_token %}
@@ -28,10 +28,10 @@
                     {% endfor %}
                     <div class="d-flex flex-row gap-2">
                         {% if object %}
-                            <a href="{% url 'doctor-delete' object.pk %}"
+                            <a href="{% url 'consultorio-delete' object.pk %}"
                                class="btn flex-fill btn-danger">Eliminar</a>
                         {% endif %}
-                        <a href="{% url 'doctor-list' %}" class="btn flex-fill btn-secondary">Cancelar</a>
+                        <a href="{% url 'consultorio-list' %}" class="btn flex-fill btn-secondary">Cancelar</a>
                         <button type="submit" class="btn flex-fill btn-primary">Guardar</button>
                     </div>
                 </form>

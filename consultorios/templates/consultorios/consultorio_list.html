@@ -1,0 +1,63 @@
+{% extends 'core/panel.html' %}
+
+{% block title %}Consultorios{% endblock %}
+
+{% block content-panel %}
+    <div class="py-4">
+        <div class="d-flex flex-row justify-content-between mb-4">
+            <a href="{% url 'consultorio-create' %}" class="btn btn-primary">
+                Nuevo
+            </a>
+            <form class="d-flex flex-row gap-2" action="." method="GET">
+                <input type="text" name="word" class="form-control flex-fill" value="{{ request.GET.word }}"
+                       placeholder="Buscar reservas" />
+                <button class="btn btn-success" type="submit">Buscar</button>
+            </form>
+        </div>
+        <div class="table-section">
+            <table class="table table-bordered table-sm table-fixed">
+                <thead>
+                <tr class="text-center border-bottom">
+                    <th scope="col">#</th>
+                    <th scope="col">Piso</th>
+                    <th scope="col">Especialidad</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col">Doctores</th>
+                    <th scope="col">Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% if object_list %}
+                    {% for consultorio in object_list %}
+                        <tr class="text-center">
+                            <td>{{ consultorio.id }}</td>
+                            <td>{{ consultorio.piso.nombre }}</td>
+                            <td>{{ consultorio.especialidad.nombre }}</td>
+                            <td>{{ consultorio.nombre }}</td>
+                            <td>{{ consultorio.get_estado_display }}</td>
+                            <td>
+                                <div class="d-flex flex-column gap-1">
+                                    {% for asociacion in consultorio.doctores.all %}
+                                        <div class="flex-fill">
+                                            {{ asociacion.doctor.persona.nombres }} {{ asociacion.doctor.persona.apellidos }} - {{ asociacion.hora_inicio }} a {{ asociacion.hora_fin }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </td>
+                            <td>
+                                <a href="{% url 'consultorio-update' consultorio.pk %}" class="btn btn-success btn-sm">Editar</a>
+                                <a href="{% url 'asociacion-create' consultorio.pk %}" class="btn btn-secondary btn-sm">Asociacion</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr class="text-center">
+                        <td colspan="7">Sin datos disponibles</td>
+                    </tr>
+                {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

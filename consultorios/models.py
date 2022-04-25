@@ -2,8 +2,8 @@ from django.db import models
 from core.models import Especialidad, Doctor
 
 ESTADO_CHOICES = (
-    ('Activo', 'Activo'),
-    ('Inactivo', 'Inactivo')
+    ('a', 'Activo'),
+    ('i', 'Inactivo')
 )
 
 
@@ -17,13 +17,14 @@ class Piso(models.Model):
     class Meta:
         verbose_name = 'Piso'
         verbose_name_plural = 'Pisos'
+        ordering = ['pk']
 
 
 class Consultorio(models.Model):
     piso = models.ForeignKey(Piso, related_name='consultorios', on_delete=models.CASCADE)
     especialidad = models.ForeignKey(Especialidad, related_name='consultorios', on_delete=models.CASCADE)
     nombre = models.CharField(max_length=255, verbose_name='Nombre')
-    estado = models.CharField(max_length=50, choices=ESTADO_CHOICES)
+    estado = models.CharField(max_length=2, choices=ESTADO_CHOICES)
     doctores = models.ManyToManyField(Doctor, related_name='consultorios', through='Asociacion')
 
     def __str__(self):

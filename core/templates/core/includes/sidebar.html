@@ -14,7 +14,7 @@
       <a href="{% url 'doctor-list' %}" class="nav-link text-white {% if 'doctores' in request.path %}active{% endif %}">Doctores</a>
     </li>
     <li class="nav-item">
-      <a href="#" class="nav-link text-white {% if 'compras' in request.path %}active{% endif %}">Compras</a>
+      <a href="{% url 'consultorio-list' %}" class="nav-link text-white {% if 'consultorios' in request.path %}active{% endif %}">Consultorios</a>
     </li>
     <li class="nav-item">
       <a href="#" class="nav-link text-white {% if 'proveedores' in request.path %}active{% endif %}">Proveedores</a>

@@ -1,0 +1,35 @@
+{% extends 'core/panel.html' %}
+{% load widget_tweaks %}
+
+{% block title %}Asociación{% endblock %}
+
+{% block content-panel %}
+    <div class="row">
+        <div class="col-6">
+            <form action="." method="POST">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                {% for field in form %}
+                    <div class="mb-3">
+                        {% if field.name == 'consultorio' %}
+                            {{ field|attr:"hidden:True" }}
+                        {% else %}
+                            <label for="id_codigo" class="form-label">{{ field.label }}</label>
+                            {% if field.errors %}
+                                {{ field|add_class:"form-control is-invalid" }}
+                                {% for error in field.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            {% else %}
+                                {{ field|add_class:"form-control" }}
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </form>
+        </div>
+        <div class="col-6">
+            list
+        </div>
+    </div>
+{% endblock %}

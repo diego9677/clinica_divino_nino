@@ -38,10 +38,10 @@ class Usuario(AbstractUser):
 class Doctor(models.Model):
     persona = models.OneToOneField(Persona, unique=True, related_name='doctor', on_delete=models.CASCADE)
     especialidad = models.ForeignKey(Especialidad, related_name='doctores', on_delete=models.CASCADE)
-    cod_interno = models.CharField(max_length=200, verbose_name='Codigo Interno')
+    cod_interno = models.CharField(max_length=100, unique=True, verbose_name='Codigo Interno')
 
     def __str__(self):
-        return self.cod_interno
+        return f'{self.persona.nombres} {self.persona.apellidos}'
 
     class Meta:
         verbose_name = 'Doctor'

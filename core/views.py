@@ -90,7 +90,7 @@ class DoctorDeleteView(LoginRequiredMixin, DeleteView):
         return HttpResponseRedirect(success_url)
 
 
-class DoctorCreateView(CreateView):
+class DoctorCreateView(LoginRequiredMixin, CreateView):
     model = Doctor
     form_class = DoctorForm
     success_url = reverse_lazy('doctor-list')
@@ -108,7 +108,8 @@ class DoctorCreateView(CreateView):
         return super().form_valid(form)
 
 
-class DoctorUpdateView(UpdateView):
+class DoctorUpdateView(LoginRequiredMixin, UpdateView):
+    login_url = reverse_lazy('login')
     model = Doctor
     form_class = DoctorForm
     initial = {}
