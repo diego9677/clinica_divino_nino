@@ -28,65 +28,6 @@ class ReservaListView(LoginRequiredMixin, ListView):
                 doctor__persona__nombres__icontains=word) | Q(paciente__persona__apellidos__icontains=word))
 
 
-class ReservaCreateView(LoginRequiredMixin, CreateView):
-    login_url = reverse_lazy('login')
-    model = Reserva
-    form_class = ReservaForm
-    initial = {}
-    success_url = reverse_lazy('reserva-list')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['especialidades'] = Especialidad.objects.all()
-        especialidad_id = self.request.GET.get('especialidad')
-        if especialidad_id:
-            context['doctores'] = Doctor.objects.filter(especialidad_id=especialidad_id)
-        else:
-            context['doctores'] = Doctor.objects.all()
-        doctor_id = self.request.GET.get('doctor', None)
-        if doctor_id:
-            fecha = self.request.GET.get('fecha')
-            cupos = []
-            doctor = Doctor.objects.get(pk=doctor_id)
-            for asociacion in doctor.asociacion_set.all():
-                hora_current = asociacion.turno.hora_inicio
-                hora_fin = asociacion.turno.hora_fin
-                tiempo_min = asociacion.turno.tiempo_min
-                turno_cupos = {'turno': asociacion.turno.nombre, 'cupos': []}
-                cont = 0
-                while hora_current < hora_fin:
-                    cont += 1
-                    active = True
-                    if Reserva.objects.filter(doctor=doctor, fecha_reserva=fecha,
-                                              hora_reserva=hora_current).exists():
-                        active = False
-                    turno_cupos['cupos'].append(
-                        {'id': f'cupo_{cont}', 'nombre': f'Cupo {cont}', 'value': hora_current, 'active': active})
-                    hora_current = add_minutes(hora_current, tiempo_min)
-                cupos.append(turno_cupos)
-            context['cupos'] = cupos
-        return context
-
-    def get_initial(self):
-        initial = super().get_initial()
-        doctor_id = self.request.GET.get('doctor', None)
-        fecha = self.request.GET.get('fecha', None)
-        initial['fecha_reserva'] = fecha
-        try:
-            initial['doctor'] = Doctor.objects.get(pk=doctor_id)
-        except Doctor.DoesNotExist:
-            pass
-        try:
-            initial['paciente'] = Paciente.objects.get(pk=self.kwargs.get('paciente_id'))
-        except Paciente.DoesNotExist:
-            pass
-        return initial
-
-    def form_valid(self, form):
-        form.save()
-        return super().form_valid(form)
-
-
 class DoctorListView(LoginRequiredMixin, ListView):
     login_url = reverse_lazy('login')
     model = Doctor
