@@ -1,35 +1,62 @@
 <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px;">
-  <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-    <span class="fs-4">PeñaVal</span>
-  </a>
-  <hr>
-  <ul class="nav nav-pills flex-column mb-auto">
-  {% comment %} <li class="nav-item">
+    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+        <span class="fs-4">Clinica Divino Niño</span>
+    </a>
+    <hr>
+    <ul class="nav nav-pills flex-column mb-auto">
+        {% comment %} <li class="nav-item">
       <a href="#" class="nav-link active" aria-current="page">Home</a>
     </li> {% endcomment %}
-    <li class="nav-item">
-      <a href="{% url 'reserva-list' %}" class="nav-link text-white {% if 'reservas' in request.path %}active{% endif %}">Reservas</a>
-    </li>
-    <li class="nav-item">
-      <a href="{% url 'doctor-list' %}" class="nav-link text-white {% if 'doctores' in request.path %}active{% endif %}">Doctores</a>
-    </li>
-    <li class="nav-item">
-      <a href="{% url 'consultorio-list' %}" class="nav-link text-white {% if 'consultorios' in request.path %}active{% endif %}">Consultorios</a>
-    </li>
-    <li class="nav-item">
-      <a href="#" class="nav-link text-white {% if 'proveedores' in request.path %}active{% endif %}">Proveedores</a>
-    </li>
-  </ul>
-  <hr>
-  <div class="dropdown">
-    <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-      <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
-      <strong>{{ request.user }}</strong>
-    </a>
-    <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-      <li><a class="dropdown-item" href="{% url 'admin:index' %}">Administración</a></li>
-      <li><hr class="dropdown-divider"></li>
-      <li><a class="dropdown-item" href="{% url 'logout' %}">Cerrar Sesión</a></li>
+        <li class="nav-item">
+            <a href="{% url 'reserva-list' %}"
+               class="nav-link text-white {% if 'reservas' in request.path %}active{% endif %}">
+                <div class="d-flex gap-2 justufy-content-center align-items-center">
+                    <i class="las la-lg la-book"></i>
+                    Reservas
+                </div>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'doctor-list' %}"
+               class="nav-link text-white {% if 'doctores' in request.path %}active{% endif %}">
+                <div class="d-flex gap-2 justufy-content-center align-items-center">
+                    <i class="las la-lg la-user-nurse"></i>
+                    Doctores
+                </div>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'consultorio-list' %}"
+               class="nav-link text-white {% if 'consultorios' in request.path %}active{% endif %}">
+                <div class="d-flex gap-2 justufy-content-center align-items-center">
+                    <i class="las la-lg la-clinic-medical"></i>
+                    Consultorios
+                </div>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'paciente-list' %}"
+               class="nav-link text-white {% if 'pacientes' in request.path %}active{% endif %}">
+                <div class="d-flex gap-2 justufy-content-center align-items-center">
+                    <i class="las la-lg la-user-friends"></i>
+                    Pacientes
+                </div>
+            </a>
+        </li>
     </ul>
-  </div>
+    <hr>
+    <div class="dropdown">
+        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1"
+           data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
+            <strong>{{ request.user }}</strong>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+            <li><a class="dropdown-item" href="{% url 'admin:index' %}">Administración</a></li>
+            <li>
+                <hr class="dropdown-divider">
+            </li>
+            <li><a class="dropdown-item" href="{% url 'logout' %}">Cerrar Sesión</a></li>
+        </ul>
+    </div>
 </div>

@@ -1,6 +1,6 @@
 from django import forms
-from django.db.models import  Q
-from .models import Persona, Reserva, Doctor, Especialidad
+from django.db.models import Q
+from .models import Persona, Reserva, Doctor, Especialidad, Paciente
 
 
 class DatePickerInput(forms.DateInput):
@@ -37,6 +37,23 @@ class DoctorForm(forms.ModelForm):
 
     def clean_ci(self):
         ci = self.cleaned_data.get('ci')
-        if Persona.objects.filter(Q(ci=ci) & ~Q(pk=self.instance.pk)).exists():
+        if Persona.objects.filter(Q(ci=ci) & ~Q(doctor__pk=self.instance.pk)).exists():
+            raise forms.ValidationError('El ci ya se encuentra registrado')
+        return ci
+
+
+class PacienteForm(forms.ModelForm):
+    ci = forms.CharField(max_length=20, label='CI', required=True)
+    nombres = forms.CharField(max_length=255, label='Nombres', required=True)
+    apellidos = forms.CharField(max_length=255, label='Apellidos', required=True)
+    fecha_nacimiento = forms.DateField(label='Fecha Nacimiento', widget=DatePickerInput(), required=True)
+
+    class Meta:
+        model = Paciente
+        fields = ['ci', 'nombres', 'apellidos', 'fecha_nacimiento']
+
+    def clean_ci(self):
+        ci = self.cleaned_data.get('ci')
+        if Persona.objects.filter(Q(ci=ci) & ~Q(paciente__pk=self.instance.pk)).exists():
             raise forms.ValidationError('El ci ya se encuentra registrado')
         return ci

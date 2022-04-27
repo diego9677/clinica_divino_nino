@@ -1,14 +1,14 @@
 {% extends 'core/panel.html' %}
 {% load widget_tweaks %}
 
-{% block title %}{% if object %}Editar{% else %}Nuevo{% endif %} Doctor{% endblock %}
+{% block title %}{% if object %}Editar{% else %}Nuevo{% endif %} paciente{% endblock %}
 
 {% block content-panel %}
     <div class="row py-2 px-4">
         <div class="card col-5 mx-auto">
             <div class="card-body">
                 <div class="card-title">
-                    <h3>{% if object %}Editar{% else %}Nueva{% endif %} Doctor</h3>
+                    <h3>{% if object %}Editar{% else %}Nueva{% endif %} paciente</h3>
                 </div>
                 <form action="." method="POST">
                     {% csrf_token %}
@@ -28,19 +28,17 @@
                     {% endfor %}
                     <div class="d-flex flex-row gap-2">
                         {% if object %}
-                            <a href="{% url 'doctor-delete' object.pk %}"
+                            <a href="{% url 'paciente-delete' object.pk %}"
                                class="d-flex gap-2 justify-content-center align-items-center btn flex-fill btn-danger">
                                 <i class="las la-lg la-trash-alt"></i>
                                 Eliminar
                             </a>
                         {% endif %}
-                        <a href="{% url 'doctor-list' %}"
-                           class="d-flex gap-2 justify-content-center align-items-center btn flex-fill btn-secondary">
+                        <a href="{% url 'paciente-list' %}" class="d-flex gap-2 justify-content-center align-items-center btn flex-fill btn-secondary">
                             <i class="las la-lg la-undo"></i>
                             Cancelar
                         </a>
-                        <button type="submit"
-                                class="d-flex gap-2 justify-content-center align-items-center btn flex-fill btn-primary">
+                        <button type="submit" class="d-flex gap-2 justify-content-center align-items-center btn flex-fill btn-primary">
                             <i class="las la-lg la-save"></i>
                             Guardar
                         </button>

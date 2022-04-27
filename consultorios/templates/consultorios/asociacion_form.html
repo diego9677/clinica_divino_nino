@@ -4,7 +4,7 @@
 {% block title %}Asociación{% endblock %}
 
 {% block content-panel %}
-    <div class="row">
+    <div class="row mt-5">
         <div class="col-6">
             <form action="." method="POST">
                 {% csrf_token %}
@@ -26,10 +26,42 @@
                         {% endif %}
                     </div>
                 {% endfor %}
+                <div class="d-flex flex-row gap-2">
+                    <a href="{% url 'consultorio-list' %}" class="btn flex-fill btn-secondary">Cancelar</a>
+                    <button type="submit" class="flex-fill d-flex gap-2 flex-row justify-content-center align-items-center btn btn-primary text-whit">
+                        <i class="las la-lg la-save"></i>
+                        Guardar
+                    </button>
+                </div>
             </form>
         </div>
         <div class="col-6">
-            list
+            <div class="table-section">
+                <table class="table table-bordered table-sm table-fixed">
+                    <thead>
+                    <tr class="text-center border-bottom">
+                        <th>Doctor</th>
+                        <th>Hora Inicio</th>
+                        <th>Hora Fin</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for asociacion in asociaciones %}
+                        <tr class="text-center">
+                            <td>{{ asociacion.doctor.persona.nombres }} {{ asociacion.doctor.persona.apellidos }}</td>
+                            <td>{{ asociacion.hora_inicio }}</td>
+                            <td>{{ asociacion.hora_fin }}</td>
+                            <td>
+                                <a href="{% url 'asociacion-delete' asociacion.pk %}" class="btn btn-danger btn-sm" title="Eliminar">
+                                    <i class="las la-lg la-trash-alt"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 {% endblock %}

@@ -1,16 +1,16 @@
 {% extends 'core/panel.html' %}
 
-{% block title %}Doctores{% endblock %}
+{% block title %}Pacientes{% endblock %}
 
 {% block content-panel %}
     <div class="py-4">
         <div class="d-flex flex-row justify-content-between mb-4">
-            <a href="{% url 'doctor-create' %}" class="btn btn-primary" title="Nuevo">
+            <a href="{% url 'paciente-create' %}" class="btn btn-primary" title="Nuevo">
                 <i class="las la-lg la-plus"></i>
             </a>
             <form class="d-flex flex-row gap-2" action="." method="GET">
                 <input type="text" name="word" class="form-control flex-fill" value="{{ request.GET.word }}"
-                       placeholder="Buscar reservas"/>
+                       placeholder="Buscar pacientes"/>
                 <button class="btn btn-success" type="submit" title="Buscar">
                     <i class="las la-lg la-search"></i>
                 </button>
@@ -23,32 +23,31 @@
                     <th scope="col">#</th>
                     <th scope="col">CI</th>
                     <th scope="col">Nombre Completo</th>
-                    <th scope="col">Codigo Interno</th>
-                    <th scope="col">Especialidad</th>
                     <th scope="col">Fecha Nac.</th>
-                    <th scope="col">Acciones</th>
+                    <th scope="col"></th>
                 </tr>
                 </thead>
                 <tbody>
                 {% if object_list %}
-                    {% for doctor in object_list %}
+                    {% for paciente in object_list %}
                         <tr class="text-center">
-                            <td>{{ doctor.id }}</td>
-                            <td>{{ doctor.persona.ci }}</td>
-                            <td>{{ doctor.persona.nombres }} {{ doctor.persona.apellidos }}</td>
-                            <td>{{ doctor.cod_interno }}</td>
-                            <td>{{ doctor.especialidad }}</td>
-                            <td>{{ doctor.persona.fecha_nacimiento|date:"d/m/Y" }}</td>
+                            <td>{{ paciente.id }}</td>
+                            <td>{{ paciente.persona.ci }}</td>
+                            <td>{{ paciente.persona.nombres }} {{ paciente.persona.apellidos }}</td>
+                            <td>{{ paciente.persona.fecha_nacimiento|date:"d/m/Y" }}</td>
                             <td>
-                                <a href="{% url 'doctor-update' doctor.pk %}" class="btn btn-success btn-sm" title="Editar">
+                                <a href="{% url 'paciente-update' paciente.pk %}" class="btn btn-success btn-sm" title="Editar">
                                     <i class="las la-lg la-pen"></i>
+                                </a>
+                                <a href="{% url 'reserva-create' paciente.pk %}" class="btn btn-secondary btn-sm" title="Asignar">
+                                    <i class="las la-lg la-arrow-circle-right"></i>
                                 </a>
                             </td>
                         </tr>
                     {% endfor %}
                 {% else %}
                     <tr class="text-center">
-                        <td colspan="7">Sin datos disponibles</td>
+                        <td colspan="5">Sin datos disponibles</td>
                     </tr>
                 {% endif %}
                 </tbody>

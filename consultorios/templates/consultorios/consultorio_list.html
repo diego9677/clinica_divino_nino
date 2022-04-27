@@ -5,13 +5,15 @@
 {% block content-panel %}
     <div class="py-4">
         <div class="d-flex flex-row justify-content-between mb-4">
-            <a href="{% url 'consultorio-create' %}" class="btn btn-primary">
-                Nuevo
+            <a href="{% url 'consultorio-create' %}" class="btn btn-primary" title="Nuevo">
+                <i class="las la-lg la-plus"></i>
             </a>
             <form class="d-flex flex-row gap-2" action="." method="GET">
                 <input type="text" name="word" class="form-control flex-fill" value="{{ request.GET.word }}"
-                       placeholder="Buscar reservas" />
-                <button class="btn btn-success" type="submit">Buscar</button>
+                       placeholder="Buscar consultorio" />
+                <button class="btn btn-success" type="submit" title="Buscar">
+                    <i class="las la-lg la-search"></i>
+                </button>
             </form>
         </div>
         <div class="table-section">
@@ -38,16 +40,20 @@
                             <td>{{ consultorio.get_estado_display }}</td>
                             <td>
                                 <div class="d-flex flex-column gap-1">
-                                    {% for asociacion in consultorio.doctores.all %}
+                                    {% for asociacion in consultorio.asociacion_set.all %}
                                         <div class="flex-fill">
-                                            {{ asociacion.doctor.persona.nombres }} {{ asociacion.doctor.persona.apellidos }} - {{ asociacion.hora_inicio }} a {{ asociacion.hora_fin }}
+                                            {{ asociacion.doctor.persona.nombres }} {{ asociacion.doctor.persona.apellidos }}, {{ asociacion.hora_inicio }} a {{ asociacion.hora_fin }}
                                         </div>
                                     {% endfor %}
                                 </div>
                             </td>
                             <td>
-                                <a href="{% url 'consultorio-update' consultorio.pk %}" class="btn btn-success btn-sm">Editar</a>
-                                <a href="{% url 'asociacion-create' consultorio.pk %}" class="btn btn-secondary btn-sm">Asociacion</a>
+                                <a href="{% url 'consultorio-update' consultorio.pk %}" class="btn btn-success btn-sm" title="Editar">
+                                    <i class="las la-lg la-pen"></i>
+                                </a>
+                                <a href="{% url 'asociacion-create' consultorio.pk %}" class="btn btn-secondary btn-sm" title="Asociar">
+                                    <i class="las la-lg la-arrow-circle-right"></i>
+                                </a>
                             </td>
                         </tr>
                     {% endfor %}

@@ -3,8 +3,8 @@ from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.views.generic import ListView, CreateView, DeleteView, UpdateView
-from .models import Doctor, Reserva, Persona
-from .forms import ReservaForm, DoctorForm
+from .models import Doctor, Reserva, Persona, Paciente
+from .forms import ReservaForm, DoctorForm, PacienteForm
 
 
 class ReservaListView(LoginRequiredMixin, ListView):
@@ -24,11 +24,20 @@ class ReservaCreateView(LoginRequiredMixin, CreateView):
     login_url = reverse_lazy('login')
     model = Reserva
     form_class = ReservaForm
+    initial = {}
     success_url = reverse_lazy('reserva-list')
 
-    # def form_valid(self, form):
-    #     reserva = form.save(commit=False)
-    #     return super().form_valid(form)
+    def get_initial(self):
+        initial = super().get_initial()
+        try:
+            initial['paciente'] = Paciente.objects.get(pk=self.kwargs.get('paciente_id'))
+        except Paciente.DoesNotExist:
+            pass
+        return initial
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
 
 
 class DoctorListView(LoginRequiredMixin, ListView):
@@ -133,3 +142,73 @@ class DoctorUpdateView(LoginRequiredMixin, UpdateView):
         doctor.persona.save()
         doctor.save()
         return super().form_valid(form)
+
+
+class PacienteListView(LoginRequiredMixin, ListView):
+    login_url = reverse_lazy('login')
+    model = Paciente
+
+    def get_queryset(self):
+        word = self.request.GET.get('word', '')
+        queryset = Paciente.objects.filter(Q(persona__nombres__icontains=word) | Q(persona__apellidos__icontains=word))
+        return queryset
+
+
+class PacienteCreateView(LoginRequiredMixin, CreateView):
+    login_url = reverse_lazy('login')
+    model = Paciente
+    form_class = PacienteForm
+    success_url = reverse_lazy('paciente-list')
+
+    def form_valid(self, form):
+        persona = Persona()
+        persona.ci = form.cleaned_data.get('ci')
+        persona.nombres = form.cleaned_data.get('nombres')
+        persona.apellidos = form.cleaned_data.get('apellidos')
+        persona.fecha_nacimiento = form.cleaned_data.get('fecha_nacimiento')
+        persona.save()
+        paciente = form.save(commit=False)
+        paciente.persona = persona
+        paciente.usuario = self.request.user
+        paciente.save()
+        return super().form_valid(form)
+
+
+class PacienteUpdateView(LoginRequiredMixin, UpdateView):
+    login_url = reverse_lazy('login')
+    model = Paciente
+    form_class = PacienteForm
+    initial = {}
+    success_url = reverse_lazy('paciente-list')
+
+    def get_initial(self):
+        initial = super().get_initial()
+        paciente = self.get_object()
+        initial['ci'] = paciente.persona.ci
+        initial['nombres'] = paciente.persona.nombres
+        initial['apellidos'] = paciente.persona.apellidos
+        initial['fecha_nacimiento'] = paciente.persona.fecha_nacimiento.isoformat()
+        return initial
+
+    def form_valid(self, form):
+        paciente = form.save(commit=False)
+        paciente.persona.ci = form.cleaned_data.get('ci')
+        paciente.persona.nombres = form.cleaned_data.get('nombres')
+        paciente.persona.apellidos = form.cleaned_data.get('apellidos')
+        paciente.persona.fecha_nacimiento = form.cleaned_data.get('fecha_nacimiento')
+        paciente.persona.save()
+        paciente.save()
+        return super().form_valid(form)
+
+
+class PacienteDeleteView(LoginRequiredMixin, DeleteView):
+    login_url = reverse_lazy('login')
+    model = Paciente
+    success_url = reverse_lazy('paciente-list')
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+        self.object.persona.delete()
+        self.object.delete()
+        return HttpResponseRedirect(success_url)

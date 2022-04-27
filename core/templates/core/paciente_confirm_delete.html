@@ -1,14 +1,14 @@
 {% extends 'core/panel.html' %}
 
-{% block title %}Eliminar consultorio {{ object }}{% endblock %}
+{% block title %}Eliminar paciente {{ object }}{% endblock %}
 
 {% block content-panel %}
     <div class="py-2 px-4 row">
         <form class="col-5 mt-5" method="POST">{% csrf_token %}
-            <p class="fs-5">¿Esta seguro que desea eliminar la asociacion "{{ object }}"?</p>
+            <p class="fs-5">¿Esta seguro que desea eliminar el paciente "{{ object }}"?</p>
             {{ form }}
             <div class="d-flex flex-row gap-2">
-                <a href="{% url 'asociacion-create' object.consultorio_id %}" class="btn btn-secondary flex-fill">Cancelar</a>
+                <a href="{% url 'paciente-list' %}" class="btn btn-secondary flex-fill">Cancelar</a>
                 <button type="submit" class="btn btn-danger flex-fill">
                     Si, Eliminar
                 </button>
