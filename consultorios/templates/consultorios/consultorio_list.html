@@ -42,7 +42,7 @@
                                 <div class="d-flex flex-column gap-1">
                                     {% for asociacion in consultorio.asociacion_set.all %}
                                         <div class="flex-fill">
-                                            {{ asociacion.doctor.persona.nombres }} {{ asociacion.doctor.persona.apellidos }}, {{ asociacion.hora_inicio }} a {{ asociacion.hora_fin }}
+                                            {{ asociacion.doctor.persona.nombres }} {{ asociacion.doctor.persona.apellidos }}, <span class="badge bg-warning text-dark">{{ asociacion.turno }}</span>
                                         </div>
                                     {% endfor %}
                                 </div>

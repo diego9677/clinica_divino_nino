@@ -41,8 +41,7 @@
                     <thead>
                     <tr class="text-center border-bottom">
                         <th>Doctor</th>
-                        <th>Hora Inicio</th>
-                        <th>Hora Fin</th>
+                        <th>Turno</th>
                         <th></th>
                     </tr>
                     </thead>
@@ -50,8 +49,7 @@
                     {% for asociacion in asociaciones %}
                         <tr class="text-center">
                             <td>{{ asociacion.doctor.persona.nombres }} {{ asociacion.doctor.persona.apellidos }}</td>
-                            <td>{{ asociacion.hora_inicio }}</td>
-                            <td>{{ asociacion.hora_fin }}</td>
+                            <td>{{ asociacion.turno }}</td>
                             <td>
                                 <a href="{% url 'asociacion-delete' asociacion.pk %}" class="btn btn-danger btn-sm" title="Eliminar">
                                     <i class="las la-lg la-trash-alt"></i>

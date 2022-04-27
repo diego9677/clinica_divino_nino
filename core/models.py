@@ -55,7 +55,7 @@ class Paciente(models.Model):
     doctores = models.ManyToManyField(Doctor, related_name='pacientes', through='Reserva')
 
     def __str__(self):
-        return str(self.pk)
+        return f'{self.persona.nombres} {self.persona.apellidos}'
 
     class Meta:
         verbose_name = 'Pacientes'

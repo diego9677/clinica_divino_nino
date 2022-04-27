@@ -5,59 +5,88 @@
 
 {% block content-panel %}
     <div class="row py-2 px-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Detalle</h5>
-                    <p class="card-text">
-                        Doctor: Diego
-                        Cod. Interno: MED-1
-                    </p>
-                </div>
+        <div class="col-6 mx-auto">
+            <h4 class="mb-3">Registrar Reserva</h4>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ message}}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            <form class="d-flex flex-row gap-2 flex-fill mb-3" action="." method="GET">
+                <select name="especialidad" id="id_especialidad" class="form-control" required>
+                    <option value="">-----------</option>
+                    {% for especialidad in especialidades %}
+                        <option value="{{ especialidad.pk }}">{{ especialidad.nombre }}</option>
+                    {% endfor %}
+                </select>
+                <select name="doctor" id="id_doctor" class="form-control">
+                    <option value="">-----------</option>
+                    {% for doctor in doctores %}
+                        <option value="{{ doctor.pk }}">{{ doctor.persona.nombres }} {{ doctor.persona.apellidos }}</option>
+                    {% endfor %}
+                </select>
+                <input type="date" name="fecha" class="form-control" value="{{ request.GET.fecha }}" required/>
+                <button class="btn btn-success" type="submit" title="Buscar">
+                    <i class="las la-lg la-search"></i>
+                </button>
+            </form>
+            <div class="card p-3">
+                {% for cupo in cupos %}
+                    <div class="d-flex flex-row align-items-center gap-2">
+                        <h5 class="flex-fill">Truno: {{ cupo.turno }}</h5>
+                        <div class="fw-bold">Asiganción:</div>
+                        <div id="id_cupo_asignado" class="badge bg-primary"></div>
+                    </div>
+                    <div class="flex-fill d-flex flex-column gap-2 mb-3">
+                        {% for cupo in cupo.cupos %}
+                            {% if cupo.active %}
+                                <button type="button" id="{{ cupo.id }}" class="p-3 btn btn-success"
+                                        onclick="onClickCupo('{{ cupo.nombre }}', '{{ cupo.value }}')">
+                                    {{ cupo.nombre }}: <span class="">{{ cupo.value }}</span>
+                                </button>
+                            {% else %}
+                                <button type="button" id="{{ cupo.id }}" class="p-3 btn btn-danger" disabled>
+                                    {{ cupo.nombre }} : {{ cupo.value }}
+                                </button>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+                <form action="." method="POST">{% csrf_token %}
+                    {{ form.errors|attr:"hidden:True" }}
+                    {{ form.paciente|attr:"hidden:True" }}
+                    {{ form.doctor|attr:"hidden:True" }}
+                    {{ form.fecha_reserva|attr:"hidden:True" }}
+                    {{ form.hora_reserva|attr:"hidden:True" }}
+                    <div class="d-flex flex-row gap-2">
+                        <a href="{% url 'paciente-list' %}"
+                           class="d-flex gap-2 justify-content-center align-items-center flex-fill btn btn-secondary">
+                            <i class="las la-lg la-undo"></i>
+                            Cancelar
+                        </a>
+                        <button class="d-flex gap-2 justify-content-center align-items-center flex-fill btn btn-primary">
+                            <i class="las la-lg la-save"></i>
+                            Registrar
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
-{#        <div class="card col-5 mx-auto">#}
-{#            <div class="card-body">#}
-{#                <div class="card-title">#}
-{#                    <h3>{% if object %}Editar{% else %}Nueva{% endif %} Reserva</h3>#}
-{#                </div>#}
-{#                <form action="." method="POST">#}
-{#                    {% csrf_token %}#}
-{#                    {{ form.non_field_errors }}#}
-{#                    {% for field in form %}#}
-{#                        <div class="mb-3">#}
-{#                            {% if field.name == 'paciente' %}#}
-{#                                {{ field|attr:"hidden:True" }}#}
-{#                            {% else %}#}
-{#                                {% if field.errors %}#}
-{#                                    <label for="id_{{ field.name }}" class="form-label">{{ field.label }}</label>#}
-{#                                    {{ field|add_class:"form-control is-invalid" }}#}
-{#                                    {% for error in field.errors %}#}
-{#                                        <div class="invalid-feedback">{{ error }}</div>#}
-{#                                    {% endfor %}#}
-{#                                {% else %}#}
-{#                                    {% if field.name == 'activo' %}#}
-{#                                        {{ field|add_class:"form-check-input" }}#}
-{#                                        <label for="id_{{ field.name }}"#}
-{#                                               class="form-check-label">{{ field.label }}</label>#}
-{#                                    {% else %}#}
-{#                                        <label for="id_{{ field.name }}" class="form-label">{{ field.label }}</label>#}
-{#                                        {{ field|add_class:"form-control" }}#}
-{#                                    {% endif %}#}
-{#                                {% endif %}#}
-{#                            {% endif %}#}
-{#                        </div>#}
-{#                    {% endfor %}#}
-{#                    <div class="d-flex flex-row gap-2">#}
-{#                        {% if object %}#}
-{#                            <a href="#"#}
-{#                               class="btn flex-fill btn-danger">Eliminar</a>#}
-{#                        {% endif %}#}
-{#                        <a href="{% url 'reserva-list' %}" class="btn flex-fill btn-secondary">Cancelar</a>#}
-{#                        <button type="submit" class="btn flex-fill btn-primary">Guardar</button>#}
-{#                    </div>#}
-{#                </form>#}
-{#            </div>#}
-{#        </div>#}
     </div>
 {% endblock %}
+
+{% block js-extra %}
+    <script>
+        document.getElementById('id_especialidad').value = '{{ request.GET.especialidad }}'
+        document.getElementById('id_doctor').value = '{{ request.GET.doctor }}'
+
+        function onClickCupo(cupo, value) {
+            document.getElementById('id_hora_reserva').value = value
+            document.getElementById('id_cupo_asignado').innerText = cupo
+        }
+    </script>
+{% endblock %}
+
+

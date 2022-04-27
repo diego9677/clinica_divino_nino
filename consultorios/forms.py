@@ -12,7 +12,7 @@ class ConsultorioForm(forms.ModelForm):
 class AsociacionForm(forms.ModelForm):
     class Meta:
         model = Asociacion
-        fields = ['consultorio', 'doctor', 'hora_inicio', 'hora_fin']
+        fields = ['consultorio', 'doctor', 'turno']
         widgets = {
             'hora_inicio': TimePickerInput(),
             'hora_fin': TimePickerInput()
@@ -31,17 +31,9 @@ class AsociacionForm(forms.ModelForm):
             raise forms.ValidationError('El doctor ya esta asociado')
         return doctor
 
-    def clean_hora_inicio(self):
-        hora_inicio = self.cleaned_data.get('hora_inicio')
+    def clean_turno(self):
+        turno = self.cleaned_data.get('turno')
         consultorio = self.cleaned_data.get('consultorio')
-        if Asociacion.objects.filter(consultorio=consultorio, hora_fin__gte=hora_inicio).exists():
+        if Asociacion.objects.filter(consultorio=consultorio, turno=turno).exists():
             raise forms.ValidationError('El consultorio esta ocupado.')
-        return hora_inicio
-
-    def clean_hora_fin(self):
-        hora_inicio = self.cleaned_data.get('hora_inicio')
-        hora_fin = self.cleaned_data.get('hora_fin')
-        # consultorio = self.cleaned_data.get('consultorio')
-        if hora_inicio and hora_fin <= hora_inicio:
-            raise forms.ValidationError('Hora fin incorrecta')
-        return hora_fin
+        return turno

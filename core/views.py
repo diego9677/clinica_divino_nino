@@ -1,10 +1,18 @@
+from django.contrib import messages
+from django.shortcuts import render, get_object_or_404, redirect
+from datetime import datetime, timedelta
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.views.generic import ListView, CreateView, DeleteView, UpdateView
-from .models import Doctor, Reserva, Persona, Paciente
+from .models import Doctor, Reserva, Persona, Paciente, Especialidad
 from .forms import ReservaForm, DoctorForm, PacienteForm
+
+
+def add_minutes(dt, time_add):
+    date = datetime(100, 1, 1, dt.hour, dt.minute, dt.second)
+    return (date + timedelta(minutes=time_add)).time()
 
 
 class ReservaListView(LoginRequiredMixin, ListView):
@@ -27,8 +35,47 @@ class ReservaCreateView(LoginRequiredMixin, CreateView):
     initial = {}
     success_url = reverse_lazy('reserva-list')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['especialidades'] = Especialidad.objects.all()
+        especialidad_id = self.request.GET.get('especialidad')
+        if especialidad_id:
+            context['doctores'] = Doctor.objects.filter(especialidad_id=especialidad_id)
+        else:
+            context['doctores'] = Doctor.objects.all()
+        doctor_id = self.request.GET.get('doctor', None)
+        if doctor_id:
+            fecha = self.request.GET.get('fecha')
+            cupos = []
+            doctor = Doctor.objects.get(pk=doctor_id)
+            for asociacion in doctor.asociacion_set.all():
+                hora_current = asociacion.turno.hora_inicio
+                hora_fin = asociacion.turno.hora_fin
+                tiempo_min = asociacion.turno.tiempo_min
+                turno_cupos = {'turno': asociacion.turno.nombre, 'cupos': []}
+                cont = 0
+                while hora_current < hora_fin:
+                    cont += 1
+                    active = True
+                    if Reserva.objects.filter(doctor=doctor, fecha_reserva=fecha,
+                                              hora_reserva=hora_current).exists():
+                        active = False
+                    turno_cupos['cupos'].append(
+                        {'id': f'cupo_{cont}', 'nombre': f'Cupo {cont}', 'value': hora_current, 'active': active})
+                    hora_current = add_minutes(hora_current, tiempo_min)
+                cupos.append(turno_cupos)
+            context['cupos'] = cupos
+        return context
+
     def get_initial(self):
         initial = super().get_initial()
+        doctor_id = self.request.GET.get('doctor', None)
+        fecha = self.request.GET.get('fecha', None)
+        initial['fecha_reserva'] = fecha
+        try:
+            initial['doctor'] = Doctor.objects.get(pk=doctor_id)
+        except Doctor.DoesNotExist:
+            pass
         try:
             initial['paciente'] = Paciente.objects.get(pk=self.kwargs.get('paciente_id'))
         except Paciente.DoesNotExist:
@@ -48,43 +95,6 @@ class DoctorListView(LoginRequiredMixin, ListView):
         word = self.request.GET.get('word', '')
         return Doctor.objects.select_related('persona').filter(
             Q(persona__nombres__icontains=word) | Q(persona__apellidos__icontains=word))
-
-
-# class DoctorFormView(LoginRequiredMixin, FormView):
-#     form_class = DoctorForm
-#     template_name = 'core/doctor_form.html'
-#     success_url = reverse_lazy('doctor-list')
-#     initial = {}
-#
-#     def get_context_data(self, **kwargs):
-#         pk = self.kwargs.get('pk', None)
-#         context = super().get_context_data(**kwargs)
-#         try:
-#             doctor = Doctor.objects.get(pk=pk)
-#             context['object'] = doctor
-#         except Doctor.DoesNotExist:
-#             pass
-#         return context
-#
-#     def get_initial(self, **kwargs):
-#         initial = super().get_initial()
-#         pk = self.kwargs.get('pk', None)
-#         try:
-#             doctor = Doctor.objects.select_related('persona').get(pk=pk)
-#             initial['pk'] = doctor.pk
-#             initial['ci'] = doctor.persona.ci
-#             initial['nombres'] = doctor.persona.nombres
-#             initial['apellidos'] = doctor.persona.apellidos
-#             initial['fecha_nacimiento'] = doctor.persona.fecha_nacimiento.isoformat()
-#             initial['especialidad'] = doctor.especialidad
-#             initial['cod_interno'] = doctor.cod_interno
-#         except Doctor.DoesNotExist:
-#             pass
-#         return initial
-#
-#     def form_valid(self, form):
-#         form.save()
-#         return super().form_valid(form)
 
 
 class DoctorDeleteView(LoginRequiredMixin, DeleteView):
@@ -212,3 +222,57 @@ class PacienteDeleteView(LoginRequiredMixin, DeleteView):
         self.object.persona.delete()
         self.object.delete()
         return HttpResponseRedirect(success_url)
+
+
+def get_cupos(doctor, fecha):
+    cupos = []
+    for asociacion in doctor.asociacion_set.all():
+        hora_current = asociacion.turno.hora_inicio
+        hora_fin = asociacion.turno.hora_fin
+        tiempo_min = asociacion.turno.tiempo_min
+        turno_cupos = {'turno': asociacion.turno.nombre, 'cupos': []}
+        cont = 0
+        while hora_current < hora_fin:
+            cont += 1
+            active = True
+            if Reserva.objects.filter(doctor=doctor, fecha_reserva=fecha, hora_reserva=hora_current).exists():
+                active = False
+            turno_cupos['cupos'].append(
+                {'id': f'cupo_{cont}', 'nombre': f'Cupo {cont}', 'value': hora_current, 'active': active})
+            hora_current = add_minutes(hora_current, tiempo_min)
+        cupos.append(turno_cupos)
+    return cupos
+
+
+def create_reserva(request, paciente_id):
+    context = {}
+    if request.method == 'POST':
+        form = ReservaForm(request.POST)
+        if form.is_valid():
+            paciente = form.cleaned_data.get('paciente')
+            fecha_reserva = form.cleaned_data.get('fecha_reserva')
+            if Reserva.objects.filter(paciente=paciente, fecha_reserva=fecha_reserva).exists():
+                messages.error(request, 'El paciente ya tiene una reserva pendiente')
+                return redirect(reverse_lazy('reserva-create', kwargs={'paciente_id': paciente_id}))
+            form.save()
+            return redirect(reverse_lazy('reserva-list'))
+        return render(request, 'core/reserva_form.html', {'form': form})
+    especialidad_id = request.GET.get('especialidad', None)
+    doctor_id = request.GET.get('doctor', None)
+    fecha = request.GET.get('fecha', None)
+    paciente = get_object_or_404(Paciente, pk=paciente_id)
+    especialidades = Especialidad.objects.all()
+    if especialidad_id:
+        doctores = Doctor.objects.filter(especialidad_id=especialidad_id)
+    else:
+        doctores = Doctor.objects.all()
+    context['doctores'] = doctores
+    context['especialidades'] = especialidades
+    if not doctor_id:
+        return render(request, 'core/reserva_form.html', context)
+    doctor = get_object_or_404(Doctor, pk=doctor_id)
+    cupos = get_cupos(doctor, fecha)
+    form = ReservaForm(initial={'doctor': doctor, 'paciente': paciente, 'fecha_reserva': fecha})
+    context['form'] = form
+    context['cupos'] = cupos
+    return render(request, 'core/reserva_form.html', context)

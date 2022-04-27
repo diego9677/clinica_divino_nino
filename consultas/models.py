@@ -1,9 +1,11 @@
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from core.models import Paciente, Doctor, Usuario
 
 
 class HistoriaClinica(models.Model):
-    paciente = models.ForeignKey(Paciente, related_name='historia_clinica', on_delete=models.CASCADE)
+    paciente = models.OneToOneField(Paciente, unique=True, related_name='historia_clinica', on_delete=models.CASCADE)
     fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name='Fecha Creación')
     activo = models.BooleanField(default=True, verbose_name='Activo')
     doctores = models.ManyToManyField(Doctor, related_name='historia_clinica', through='Consulta')
@@ -35,3 +37,8 @@ class DetalleFactura(models.Model):
     factura = models.ForeignKey(Factura, related_name='detalle_factura', on_delete=models.CASCADE)
     descripcion = models.TextField(verbose_name='Descripción')
     precio = models.DecimalField(max_digits=9, decimal_places=2, verbose_name='Precio')
+
+
+@receiver(post_save, sender=Paciente)
+def crear_historia_clinica(sender, instance, **kwargs):
+    print(instance)

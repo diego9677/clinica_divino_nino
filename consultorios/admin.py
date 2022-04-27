@@ -1,5 +1,10 @@
 from django.contrib import admin
-from .models import Consultorio, Piso, Asociacion
+from .models import Consultorio, Piso, Asociacion, Turno
+
+
+@admin.register(Turno)
+class TurnoAdmin(admin.ModelAdmin):
+    pass
 
 
 @admin.register(Piso)
