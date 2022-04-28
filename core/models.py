@@ -10,6 +10,7 @@ class Especialidad(models.Model):
         return self.nombre
 
     class Meta:
+        db_table = 'especialidad'
         verbose_name = 'Especialidad'
         verbose_name_plural = 'Especialidades'
         ordering = ['pk']
@@ -25,14 +26,34 @@ class Persona(models.Model):
         return self.ci
 
     class Meta:
+        db_table = 'persona'
         verbose_name = 'Persona'
         verbose_name_plural = 'Personas'
+
+
+class Rol(models.Model):
+    nombre = models.CharField(max_length=200, verbose_name='Nombre')
+    descripcion = models.TextField(null=True, blank=True, verbose_name='Descipción')
+
+    def __str__(self):
+        return self.nombre
+
+    class Meta:
+        db_table = 'rol'
+        verbose_name = 'Rol'
+        verbose_name_plural = 'Roles'
 
 
 class Usuario(AbstractUser):
     USERNAME_FIELD = 'username'
 
     persona = models.OneToOneField(Persona, unique=True, related_name='usuario', null=True, on_delete=models.CASCADE)
+    rol = models.ForeignKey(Rol, related_name='usuarios', on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'usuario'
+        verbose_name = 'Usuario'
+        verbose_name_plural = 'Usuarios'
 
 
 class Doctor(models.Model):
@@ -44,6 +65,7 @@ class Doctor(models.Model):
         return f'{self.persona.nombres} {self.persona.apellidos}'
 
     class Meta:
+        db_table = 'doctor'
         verbose_name = 'Doctor'
         verbose_name_plural = 'Doctores'
 
@@ -58,6 +80,7 @@ class Paciente(models.Model):
         return f'{self.persona.nombres} {self.persona.apellidos}'
 
     class Meta:
+        db_table = 'paciente'
         verbose_name = 'Pacientes'
         verbose_name_plural = 'Pacientes'
 
@@ -73,5 +96,6 @@ class Reserva(models.Model):
         return str(self.pk)
 
     class Meta:
+        db_table = 'reserva'
         verbose_name = 'Reserva'
         verbose_name_plural = 'Reservas'

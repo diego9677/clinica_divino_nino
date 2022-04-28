@@ -16,6 +16,11 @@ class Turno(models.Model):
     def __str__(self):
         return self.nombre
 
+    class Meta:
+        db_table = 'turno'
+        verbose_name = 'Turno'
+        verbose_name_plural = 'Turnos'
+
 
 class Piso(models.Model):
     nombre = models.CharField(max_length=255, verbose_name='Nombre')
@@ -25,6 +30,7 @@ class Piso(models.Model):
         return self.nombre
 
     class Meta:
+        db_table = 'piso'
         verbose_name = 'Piso'
         verbose_name_plural = 'Pisos'
         ordering = ['pk']
@@ -41,6 +47,7 @@ class Consultorio(models.Model):
         return self.nombre
 
     class Meta:
+        db_table = 'consultorio'
         verbose_name = 'Consultorio'
         verbose_name_plural = 'Consultorios'
 
@@ -54,5 +61,6 @@ class Asociacion(models.Model):
         return str(self.pk)
 
     class Meta:
+        db_table = 'asociacion'
         verbose_name = 'Asociacion'
         verbose_name_plural = 'Asociacones'
