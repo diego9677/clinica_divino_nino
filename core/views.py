@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from datetime import datetime, timedelta
 from django.http import HttpResponseRedirect
@@ -179,12 +180,15 @@ def get_cupos(doctor, fecha):
             if Reserva.objects.filter(doctor=doctor, fecha_reserva=fecha, hora_reserva=hora_current).exists():
                 active = False
             turno_cupos['cupos'].append(
-                {'id': f'cupo_{cont}', 'nombre': f'Cupo {cont}', 'value': hora_current, 'active': active})
+                {'id': f'cupo_{asociacion.turno.nombre}_{cont}', 'nombre': f'Cupo {cont} {asociacion.turno.nombre}',
+                 'value': hora_current,
+                 'active': active})
             hora_current = add_minutes(hora_current, tiempo_min)
         cupos.append(turno_cupos)
     return cupos
 
 
+@login_required(login_url=reverse_lazy('login'))
 def create_reserva(request, paciente_id):
     context = {}
     if request.method == 'POST':
@@ -197,7 +201,8 @@ def create_reserva(request, paciente_id):
                 return redirect(reverse_lazy('reserva-create', kwargs={'paciente_id': paciente_id}))
             form.save()
             return redirect(reverse_lazy('reserva-list'))
-        return render(request, 'core/reserva_form.html', {'form': form})
+        messages.error(request, 'Debe seleccionar un cupo')
+        return redirect(reverse_lazy('reserva-create', kwargs={'paciente_id': paciente_id}))
     especialidad_id = request.GET.get('especialidad', None)
     doctor_id = request.GET.get('doctor', None)
     fecha = request.GET.get('fecha', None)
@@ -217,3 +222,9 @@ def create_reserva(request, paciente_id):
     context['form'] = form
     context['cupos'] = cupos
     return render(request, 'core/reserva_form.html', context)
+
+
+class ReservaDeleteView(LoginRequiredMixin, DeleteView):
+    login_url = reverse_lazy('login')
+    model = Reserva
+    success_url = reverse_lazy('reserva-list')

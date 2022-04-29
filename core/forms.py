@@ -18,7 +18,7 @@ class DateTimePickerInput(forms.DateTimeInput):
 class ReservaForm(forms.ModelForm):
     class Meta:
         model = Reserva
-        fields = ['paciente', 'doctor', 'fecha_reserva', 'hora_reserva', 'activo']
+        fields = ['paciente', 'doctor', 'fecha_reserva', 'hora_reserva']
         widgets = {
             'fecha_reserva': DatePickerInput(),
             'hora_reserva': TimePickerInput()

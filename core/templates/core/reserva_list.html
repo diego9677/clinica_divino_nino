@@ -24,7 +24,7 @@
                     <th scope="col">Paciente</th>
                     <th scope="col">Doctor</th>
                     <th scope="col">Fecha Reserva</th>
-                    <th scope="col">Activo</th>
+                    <th scope="col">Hora Resrva</th>
                     <th scope="col">Acciones</th>
                 </tr>
                 </thead>
@@ -36,10 +36,11 @@
                             <td>{{ reserva.paciente.persona.nombres }} {{ reserva.paciente.persona.apellidos }}</td>
                             <td>{{ reserva.doctor.persona.nombres }} {{ reserva.doctor.persona.apellidos }}</td>
                             <td>{{ reserva.fecha_reserva }}</td>
-                            <td>{{ reserva.activo }}</td>
+                            <td>{{ reserva.hora_reserva }}</td>
                             <td>
-                                <a href="#" class="btn btn-success btn-sm" title="Editar">
-                                    <i class="las la-lg la-pen"></i>
+                                <a href="{% url 'reserva-delete' reserva.pk %}" class="btn btn-danger btn-sm"
+                                   title="Eliminar">
+                                    <i class="las la-lg la-trash-alt"></i>
                                 </a>
                             </td>
                         </tr>

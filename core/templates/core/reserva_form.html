@@ -10,52 +10,55 @@
             {% if messages %}
                 {% for message in messages %}
                     <div class="alert alert-danger" role="alert">
-                        {{ message}}
+                        {{ message }}
                     </div>
                 {% endfor %}
             {% endif %}
             <form class="d-flex flex-row gap-2 flex-fill mb-3" action="." method="GET">
-                <select name="especialidad" id="id_especialidad" class="form-control" required>
+                <select title="Seleccione una especialidad" name="especialidad" id="id_especialidad" class="form-control" required>
                     <option value="">-----------</option>
                     {% for especialidad in especialidades %}
                         <option value="{{ especialidad.pk }}">{{ especialidad.nombre }}</option>
                     {% endfor %}
                 </select>
-                <select name="doctor" id="id_doctor" class="form-control">
+                <select title="Seleccione un doctor" name="doctor" id="id_doctor" class="form-control">
                     <option value="">-----------</option>
                     {% for doctor in doctores %}
                         <option value="{{ doctor.pk }}">{{ doctor.persona.nombres }} {{ doctor.persona.apellidos }}</option>
                     {% endfor %}
                 </select>
-                <input type="date" name="fecha" class="form-control" value="{{ request.GET.fecha }}" required/>
+                <input title="Ingrese una fecha" type="date" name="fecha" class="form-control" value="{{ request.GET.fecha }}" required/>
                 <button class="btn btn-success" type="submit" title="Buscar">
                     <i class="las la-lg la-search"></i>
                 </button>
             </form>
             <div class="card p-3">
-                {% for cupo in cupos %}
-                    <div class="d-flex flex-row align-items-center gap-2">
-                        <h5 class="flex-fill">Truno: {{ cupo.turno }}</h5>
-                        <div class="fw-bold">Asiganción:</div>
-                        <div id="id_cupo_asignado" class="badge bg-primary"></div>
-                    </div>
-                    <div class="flex-fill d-flex flex-column gap-2 mb-3">
-                        {% for cupo in cupo.cupos %}
-                            {% if cupo.active %}
-                                <button type="button" id="{{ cupo.id }}" class="p-3 btn btn-success"
-                                        onclick="onClickCupo('{{ cupo.nombre }}', '{{ cupo.value }}')">
-                                    {{ cupo.nombre }}: <span class="">{{ cupo.value }}</span>
-                                </button>
-                            {% else %}
-                                <button type="button" id="{{ cupo.id }}" class="p-3 btn btn-danger" disabled>
-                                    {{ cupo.nombre }} : {{ cupo.value }}
-                                </button>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                {% endfor %}
+                <div class="d-flex flex-row justify-content-end align-items-center gap-2 mb-2">
+                    <div class="fw-bold">Asiganción:</div>
+                    <div id="id_cupo_asignado" class="badge bg-primary"></div>
+                </div>
+                <div class="flex-fill d-flex flex-row gap-2 mb-3 overflow-auto" style="max-height: 450px">
+                    {% for cupo in cupos %}
+                        <div class="flex-fill d-flex flex-column gap-2">
+                            <h5>Truno: {{ cupo.turno }}</h5>
+                            {% for cupo in cupo.cupos %}
+                                <div class="d-flex flex-column">
+                                    {% if cupo.active %}
+                                        <button type="button" id="{{ cupo.id }}" class="p-3 btn btn-success"
+                                                onclick="onClickCupo('{{ cupo.nombre }}', '{{ cupo.value }}')">
+                                            {{ cupo.nombre }}: <span class="">{{ cupo.value }}</span>
+                                        </button>
+                                    {% else %}
+                                        <button type="button" id="{{ cupo.id }}" class="p-3 btn btn-danger" disabled>
+                                            {{ cupo.nombre }} : {{ cupo.value }}
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
                 <form action="." method="POST">{% csrf_token %}
-                    {{ form.errors|attr:"hidden:True" }}
                     {{ form.paciente|attr:"hidden:True" }}
                     {{ form.doctor|attr:"hidden:True" }}
                     {{ form.fecha_reserva|attr:"hidden:True" }}

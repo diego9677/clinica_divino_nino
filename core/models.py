@@ -48,7 +48,7 @@ class Usuario(AbstractUser):
     USERNAME_FIELD = 'username'
 
     persona = models.OneToOneField(Persona, unique=True, related_name='usuario', null=True, on_delete=models.CASCADE)
-    rol = models.ForeignKey(Rol, related_name='usuarios', on_delete=models.CASCADE)
+    rol = models.ForeignKey(Rol, related_name='usuarios', on_delete=models.CASCADE, null=True, default=None)
 
     class Meta:
         db_table = 'usuario'
